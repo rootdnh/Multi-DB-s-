@@ -10,7 +10,7 @@ sudo docker run \
   postgres
 
 
-# cliente
+# cliente postgres
 sudo docker run \
   --name adminer \
   -p 8080:8080 \
