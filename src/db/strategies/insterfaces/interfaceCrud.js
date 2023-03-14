@@ -21,6 +21,11 @@ class ICrud {
   delete(id) {
    throw new NotImplementedException();
   }
+
+  isConnected(){
+    throw new NotImplementedException();
+  }
+
  }
 
  module.exports = ICrud;
