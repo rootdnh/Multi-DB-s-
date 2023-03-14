@@ -31,13 +31,6 @@ sudo docker run \
 
 # cliente mongo
 
-sudo docker run \
-  --name mongoclient \
-  -p 3001:3001 \ 
-  --link my_mongodb:27017 \
-  -d \
-  mongoclient/mongoclient
-
 docker run \
     --name mongoclient \
     -p 3000:3000 \
