@@ -58,10 +58,17 @@ class MongoDB extends ICrud {
   return this._herois.create(item);
  }
 
- read(query, skip=0, limit=10) {
+ read(query, skip = 0, limit = 10) {
   return this._herois.find(query).skip(skip).limit(limit);
+ }
+
+ update(id, item) {
+  return this._herois.updateOne({_id: id}, {$set: item});
+  //quando resultado não vai ser manipulado não precisa async await
+ }
+
+ delete(id){
+  return this._herois.deleteOne({_id : id});
  }
 }
 module.exports = MongoDB;
-
-
