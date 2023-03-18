@@ -25,7 +25,7 @@ class ContextStrategy extends ICrud{
    return this._database.isConnected();
   }
 
-  connect(){
+  static connect(){
     this._database.connect();
   }
 }
