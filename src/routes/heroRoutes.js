@@ -3,6 +3,8 @@ const Joi = require("joi");
 const failAction = (request, headers, erro) => {
  throw erro;
 };
+const Boom = require('boom');
+
 class HeroRoutes extends BaseRoutes {
  constructor(db) {
   super();
@@ -32,11 +34,10 @@ class HeroRoutes extends BaseRoutes {
        $regex: `.*${nome}*.`,
       },
      };
-
      return this.db.read(nome ? query : {}, skip, limit);
     } catch (error) {
      console.log("Deu ruim: ", error);
-     return "Erro inteiro no servidor";
+     return Boom.internal();
     }
    },
   };
@@ -66,7 +67,7 @@ class HeroRoutes extends BaseRoutes {
      };
     } catch (error) {
      console.log("Error: ", error);
-     return "Internal Error";
+     return Boom.internal();
     }
    },
   };
@@ -89,18 +90,17 @@ class HeroRoutes extends BaseRoutes {
    },
    handler: async (request) => {
     try {
-      const {id} = request.params;
-      const {payload} = request;
-      //stringify e depois parsear para remover chaves undefined
-      const dadosString = JSON.stringify(payload)
-      const dados = JSON.parse(dadosString)
-      const result = await this.db.update(id, dados);
-      if(result.modifiedCount !== 1) return {
-        message: 'Não foi possível atualizar'
-      }
-      return {
-        message: "Heroi atualizado com sucesso!"
-      }
+     const { id } = request.params;
+     const { payload } = request;
+     //stringify e depois parsear para remover chaves undefined
+     const dadosString = JSON.stringify(payload);
+     const dados = JSON.parse(dadosString);
+     const result = await this.db.update(id, dados);
+     if (result.modifiedCount !== 1)
+      return Boom.preconditionFailed('Não econtrado no banco')
+     return {
+      message: "Heroi atualizado com sucesso!",
+     };
     } catch (error) {
      console.error("DEu ruim", error);
      return "Erro interno";
@@ -108,6 +108,38 @@ class HeroRoutes extends BaseRoutes {
    },
   };
  }
+
+ delete(id) {
+  return {
+   path: "/herois/{id}",
+   method: "DELETE",
+   config: {
+    validate: {
+     failAction,
+     params: {
+      id: Joi.string().required(),
+     },
+    },
+   },
+   handler: async (request) => {
+    try {
+      const {id}= request.params;
+     
+      const result = await this.db.delete(id);
+      console.log(result)
+      if(result.deletedCount !== 1)return Boom.preconditionFailed('Não econtrado no banco')
+      return {
+        message: "Heroi removido com sucesso!"
+      }
+
+    } catch (error) {
+     console.error("Deu ruim", error);
+     return Boom.internal();
+    }
+   },
+  };
+ }
+ //end class
 }
 
 module.exports = HeroRoutes;
