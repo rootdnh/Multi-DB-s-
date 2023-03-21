@@ -3,7 +3,7 @@ const Joi = require("joi");
 const failAction = (request, headers, erro) => {
  throw erro;
 };
-const Boom = require('boom');
+const Boom = require("boom");
 
 class HeroRoutes extends BaseRoutes {
  constructor(db) {
@@ -16,6 +16,9 @@ class HeroRoutes extends BaseRoutes {
    path: "/herois",
    method: "GET",
    config: {
+    tags: ["api"],
+    description: "Deve listar herois",
+    notes: "pode paginar resultados e filtrar por nome",
     validate: {
      failAction,
      query: Joi.object({
@@ -48,6 +51,9 @@ class HeroRoutes extends BaseRoutes {
    path: "/herois",
    method: "POST",
    config: {
+    tags: ["api"],
+    description: "Deve cadastrar herois",
+    notes: "Deve cadastrar heroi por nome e poder",
     validate: {
      failAction,
      payload: {
@@ -78,6 +84,9 @@ class HeroRoutes extends BaseRoutes {
    path: "/herois/{id}",
    method: "PATCH",
    config: {
+    tags: ["api"],
+    description: "Deve atualizar heroi por id ",
+    notes: "Pode atualizar qualquer campo",
     validate: {
      params: {
       id: Joi.string().required(),
@@ -97,7 +106,7 @@ class HeroRoutes extends BaseRoutes {
      const dados = JSON.parse(dadosString);
      const result = await this.db.update(id, dados);
      if (result.modifiedCount !== 1)
-      return Boom.preconditionFailed('Não econtrado no banco')
+      return Boom.preconditionFailed("Não econtrado no banco");
      return {
       message: "Heroi atualizado com sucesso!",
      };
@@ -114,6 +123,9 @@ class HeroRoutes extends BaseRoutes {
    path: "/herois/{id}",
    method: "DELETE",
    config: {
+    tags: ["api"],
+    description: "Deve remover um heroi por id ",
+    notes: "O id tem que ser válido",
     validate: {
      failAction,
      params: {
@@ -123,15 +135,15 @@ class HeroRoutes extends BaseRoutes {
    },
    handler: async (request) => {
     try {
-      const {id}= request.params;
-     
-      const result = await this.db.delete(id);
-      console.log(result)
-      if(result.deletedCount !== 1)return Boom.preconditionFailed('Não econtrado no banco')
-      return {
-        message: "Heroi removido com sucesso!"
-      }
+     const { id } = request.params;
 
+     const result = await this.db.delete(id);
+     console.log(result);
+     if (result.deletedCount !== 1)
+      return Boom.preconditionFailed("Não econtrado no banco");
+     return {
+      message: "Heroi removido com sucesso!",
+     };
     } catch (error) {
      console.error("Deu ruim", error);
      return Boom.internal();
