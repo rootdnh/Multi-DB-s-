@@ -42,9 +42,9 @@ async function main(){
     nome: 'Batman gaucho',
     poder: 'Costela'
   })
-  console.log(resulCadastrar)
+
   const listarItens = await model.find()
-    console.log(listarItens)
+   
 }
 
 

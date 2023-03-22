@@ -46,7 +46,6 @@ class HeroRoutes extends BaseRoutes {
      };
      return this.db.read(nome ? query : {}, skip, limit);
     } catch (error) {
-     console.log("Deu ruim: ", error);
      return Boom.internal();
     }
    },
@@ -76,7 +75,6 @@ class HeroRoutes extends BaseRoutes {
     try {
      const { nome, poder } = request.payload;
      const result = await this.db.create({ nome, poder });
-     console.log("result", result);
      return {
       message: "Heroi cadastrado com sucesso!",
       _id: result._id,
@@ -154,7 +152,6 @@ class HeroRoutes extends BaseRoutes {
      const { id } = request.params;
 
      const result = await this.db.delete(id);
-     console.log(result);
      if (result.deletedCount !== 1)
       return Boom.preconditionFailed("Não econtrado no banco");
      return {

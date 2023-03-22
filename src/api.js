@@ -10,6 +10,10 @@ const Vision = require("@hapi/vision");
 const Inert = require("@hapi/inert");
 const HapiJwt = require("hapi-auth-jwt2");
 const JWT_SECRET = "MEU_SEGREDÃO_123";
+const Postgres = require("./db/strategies/postgres/postgres");
+const User = require("./db/strategies/postgres/schemas/userSchema");
+const { connection } = require("mongoose");
+const UserSchema = require("./db/strategies/postgres/schemas/userSchema");
 const app = new Hapi.Server({
  port: 5001,
 });
@@ -20,6 +24,11 @@ function mapRoutes(instance, methods) {
 async function main() {
  const cennection = MongoDb.connect();
  const context = new Context(new MongoDb(cennection, HeroiSchema));
+ const connectionPostgres = await Postgres.connect();
+ const model = await Postgres.defineModel(connectionPostgres, UserSchema);
+ const contextPostgres = new Context(new Postgres(connectionPostgres, model));
+
+
  const swaggerOptions = {
   info: {
    title: "API - HEROIS",
@@ -40,19 +49,27 @@ async function main() {
   // options: {
   //   wxpiresIn: 20
   // },
-  validate: (dado, request) => {
+  validate: async (dado, request) => {
+    const [result] = await contextPostgres.read({
+      username: dado.username.toLowerCase()
+    })
+    if(!result){
+      return {
+        isValid: false,
+       };
+    }
    //veridicar no bando se usuário continua ativo || pagando
    return {
     isValid: true,
    };
   },
  });
- app.auth.default('jwt');
+ app.auth.default("jwt");
  app.validator(Joi);
- 
+
  app.route([
   ...mapRoutes(new HeroRoute(context), HeroRoute.methods()),
-  ...mapRoutes(new AuthRoutes(JWT_SECRET), AuthRoutes.methods()),
+  ...mapRoutes(new AuthRoutes(JWT_SECRET, contextPostgres), AuthRoutes.methods()),
  ]);
 
  await app.start();
