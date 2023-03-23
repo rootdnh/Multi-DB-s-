@@ -1,3 +1,12 @@
+const {config} = require('dotenv');
+const {join} = require('path');
+const {ok} = require("assert")
+const env = process.env.NODE_ENV || "dev";
+ok(env === "prod" || env === "dev", "a env é invalida, ou prod ou dev");
+const configPath = join(__dirname, '../config', `.env.${env}`);
+config({
+  path: configPath
+})
 const Hapi = require("@hapi/hapi");
 const Context = require("./db/strategies/base/contextStrategy");
 const MongoDb = require("./db/strategies/mongodb/mongodb");
@@ -9,13 +18,11 @@ const HapiSwagger = require("hapi-swagger");
 const Vision = require("@hapi/vision");
 const Inert = require("@hapi/inert");
 const HapiJwt = require("hapi-auth-jwt2");
-const JWT_SECRET = "MEU_SEGREDÃO_123";
+const MINHA_CHAVE_SERETA = process.env.JWT_KEY;
 const Postgres = require("./db/strategies/postgres/postgres");
-const User = require("./db/strategies/postgres/schemas/userSchema");
-const { connection } = require("mongoose");
 const UserSchema = require("./db/strategies/postgres/schemas/userSchema");
 const app = new Hapi.Server({
- port: 5001,
+ port: process.env.PORT,
 });
 
 function mapRoutes(instance, methods) {
@@ -45,7 +52,7 @@ async function main() {
   },
  ]);
  app.auth.strategy("jwt", "jwt", {
-  key: JWT_SECRET,
+  key: MINHA_CHAVE_SERETA,
   // options: {
   //   wxpiresIn: 20
   // },
@@ -69,7 +76,7 @@ async function main() {
 
  app.route([
   ...mapRoutes(new HeroRoute(context), HeroRoute.methods()),
-  ...mapRoutes(new AuthRoutes(JWT_SECRET, contextPostgres), AuthRoutes.methods()),
+  ...mapRoutes(new AuthRoutes(MINHA_CHAVE_SERETA, contextPostgres), AuthRoutes.methods()),
  ]);
 
  await app.start();

@@ -1,5 +1,5 @@
 const Bcrypt = require('bcrypt');
-const SALT = 3;
+const SALT = parseInt(process.env.SALT_PWD);
 const {
   promisify
 } = require('util');

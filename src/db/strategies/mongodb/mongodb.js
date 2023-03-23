@@ -1,5 +1,7 @@
 const ICrud = require("./../insterfaces/interfaceCrud");
 const Mongoose = require("mongoose");
+
+require('dotenv').config()
 const STATUS = {
  0: "Desconectado",
  1: "Conectado",
@@ -24,7 +26,7 @@ class MongoDB extends ICrud {
  }
 
  static connect() {
-  Mongoose.connect("mongodb://rootmongo:minhasenhasecreta@localhost:27017/herois", { 
+  Mongoose.connect(process.env.MONGODB_URL , { 
     useNewUrlParser: true }
   ).catch((error) => console.log("Erro na conexão", error));
 
