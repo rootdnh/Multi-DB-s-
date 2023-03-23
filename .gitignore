@@ -1,3 +1,5 @@
 node_modules
 tests
-//.env.prod
+.env.prod
+.nyc_output
+coverage
