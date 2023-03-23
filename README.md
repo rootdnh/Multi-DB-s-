@@ -44,4 +44,3 @@ sudo docker exec -it mongodb \
 
 \\dependendo da versão do mongo o comando pode ser mongosh ou mongo
 
-(OBS: não subi a versão do env.prod)
