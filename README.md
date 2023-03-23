@@ -43,3 +43,5 @@ sudo docker exec -it mongodb \
     --eval "db.getSiblingDB('herois').createUser({user: 'rootmongo', pwd: 'minhasenhasecreta', roles: [{role: 'readWrite', db: 'herois'}]})"
 
 \\dependendo da versão do mongo o comando pode ser mongosh ou mongo
+
+(OBS: não subi a versão do env.prod)
